@@ -448,6 +448,11 @@ Symbol is defined as a chunk of text recognized by
                          )
   "List of HTML modes.")
 
+(defvar sp--indentation-sensitive-modes '(
+                         python-mode
+                         )
+  "List of modes that are indentation sensitive.")
+
 (defvar sp-message-alist
   '((:unmatched-expression
      "Search failed. This means there is unmatched expression somewhere or we are at the beginning/end of file."
@@ -5463,13 +5468,14 @@ Note: prefix argument is shown after the example in
       (delete-region bdel edel)))
   (if (memq major-mode sp--lisp-modes)
       (indent-according-to-mode)
-    (save-excursion
-      (indent-region (line-beginning-position) (line-end-position)))
-    (when (> (save-excursion
-               (back-to-indentation)
-               (current-indentation))
-             (current-column))
-      (back-to-indentation))))
+    (when (not (memq major-mode sp--indentation-sensitive-modes))
+     (save-excursion
+       (indent-region (line-beginning-position) (line-end-position)))
+     (when (> (save-excursion
+                (back-to-indentation)
+                (current-indentation))
+              (current-column))
+       (back-to-indentation)))))
 
 (defun sp-backward-kill-sexp (&optional arg dont-kill)
   "Kill the balanced expression preceding point.
